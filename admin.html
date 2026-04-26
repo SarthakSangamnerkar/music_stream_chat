@@ -100,6 +100,7 @@ Deployment: Netlify / Vercel (free)
     <textarea id="input" placeholder="Type song name, vibe, or feedback..."></textarea>
     <button onclick="addSuggestion()">Send</button>
 
+    <div class="suggestions" id="list"></div>
   </div>
 
   <!-- Firebase -->
@@ -150,6 +151,7 @@ Deployment: Netlify / Vercel (free)
         });
     }
 
+    loadSuggestions();
   </script>
 </body>
 </html>
