@@ -1,0 +1,157 @@
+<!--
+Simple Music Suggestion Website
+Stack: HTML + CSS + JS + Firebase (free backend)
+Deployment: Netlify / Vercel (free)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drop Your Track 🎧</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1c1c2e);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background: rgba(255,255,255,0.05);
+      padding: 25px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      border-radius: 10px;
+      border: none;
+      padding: 10px;
+      margin-top: 15px;
+      resize: none;
+      background: #111;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #6c5ce7;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #a29bfe;
+    }
+
+    .suggestions {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .item {
+      background: #111;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎶 Drop Your Track</h1>
+    <p>Send me songs while I'm live 🎧</p>
+
+    <textarea id="input" placeholder="Type song name, vibe, or feedback..."></textarea>
+    <button onclick="addSuggestion()">Send</button>
+
+    <div class="suggestions" id="list"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // 🔥 Replace with your Firebase config
+    const firebaseConfig = {
+    apiKey: "AIzaSyC4W78QZ1S217MFk4vrJLbJGCnFl7mFhPk",
+    authDomain: "music-streamer-1ceb4.firebaseapp.com",
+    projectId: "music-streamer-1ceb4",
+    storageBucket: "music-streamer-1ceb4.firebasestorage.app",
+    messagingSenderId: "1039301258899",
+    appId: "1:1039301258899:web:e05f0c9b86ca047f45a766"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function addSuggestion() {
+      const input = document.getElementById('input');
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      db.collection('suggestions').add({
+        text: text,
+        timestamp: Date.now()
+      });
+
+      input.value = "";
+    }
+
+    function loadSuggestions() {
+      db.collection('suggestions')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot(snapshot => {
+          const list = document.getElementById('list');
+          list.innerHTML = "";
+
+          snapshot.forEach(doc => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerText = doc.data().text;
+            list.appendChild(div);
+          });
+        });
+    }
+
+    loadSuggestions();
+  </script>
+</body>
+</html>
